@@ -5,31 +5,44 @@ from pathlib import Path
 import os
 import shelve
 
-# TODO: Create .txt file for storing file paths
-os.chdir('C:\\Windows\\System32')
-storedPaths = open('storedPaths.txt', 'w')
+def main():
+    # Retrieve user home directory, check if BackupFileUtil dir exists
+    newDir = Path(Path.home()) / 'BackupFileUtil'
+    print(newDir)
+    if newDir.exists() == False:
+        os.makedirs(newDir)
 
-    # TODO: prompt for user input from user options table
+    # TODO: Create .txt file for storing file paths
 
-# TODO: Create table for user options:
+    os.chdir(Path(Path.home()) / 'BackupFileUtil')
+    print(Path.cwd())
+    storedPaths = open('storedPaths.txt', 'w')
 
-    # First time setup?
+        # TODO: prompt for user input from user options table
 
-    # Select backup drive and source drive
+    # TODO: Create table for user options:
 
-    # Add new file path?
+        # First time setup?
 
-    # View existing filepaths?
+        # Select backup drive and source drive
 
-    # Configuration (change default .txt location) 
+        # Add new file path?
+
+        # View existing filepaths?
+
+        # Configuration (change default .txt location) 
 
 
-# TODO: Execute commands from user input
+    # TODO: Execute commands from user input
 
-    # optionally print existing file paths
+        # optionally print existing file paths
 
-    # optionally write to .txt file based on user input
+        # optionally write to .txt file based on user input
 
-    # optionally backup files
+        # optionally backup files
 
-    # optionally display existing file paths or more info
+        # optionally display existing file paths or more info
+
+if __name__ == "__main__":
+    main()
+
