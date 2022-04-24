@@ -21,11 +21,14 @@ class source_config:
         stored_paths.write(new_name, new_path)
         stored_paths.close()
 
-    # return stored file paths
+    # Return stored file paths
     def return_paths() -> str:
         os.chdir(Path(Path.home()) / "BackupFileUtil")
-        stored_paths = open("storedPaths.txt", "w")
-
+        stored_paths = open("storedPaths.txt", "r")
+        path_list = stored_paths.readlines()
+        stored_paths.close()
+        return '\n'.join(path_list)
+        
 # TODO: Configure files on backup drive
 class backup_config:
     def __init__(self):
@@ -33,24 +36,28 @@ class backup_config:
     # Return all existing drives
     def return_drives() -> list:
         DRIVE_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        return list(letter + ':\\' for letter in DRIVE_LETTERS if Path(letter + ':\\').exists():
+        return list(letter + ':\\' for letter in DRIVE_LETTERS if Path(letter + ':\\').exists())
 
     # TODO: if copying file, create parent directory in backup location
     def create_parent():
-        
-
+        pass
+        #return_paths()
     # TODO: if copying directory, create it in backup location
         
 # TODO: copy files and directories
 def backup_task():
     pass
         
-def main(user_input: int) -> int: 
+def main(user_input: str) -> bool: 
     # TODO: Execute commands from user input
-    if user_input == 1:
+    if user_input == '1':
         pass
         
-    # TODO: optionally print existing file paths
+    # Optionally print existing file paths
+    if user_input == '3':
+        x = source_config.return_paths()
+        print(x)
+        return True
 
     # TODO: optionally write to .txt file based on user input
 
@@ -80,9 +87,12 @@ paths, 4 to run the backup, or 5 to view the README.\n"""
 
     # main selection loop
     while True:    
-        choice = input()
-        if choice not in [1, 2, 3, 4, 5, 6]:
+        choice = str(input())
+        if choice not in '12345':
             print('Invalid selection\n')
             continue
-        else:
-            main(choice)
+        elif main(choice):
+            pass
+        elif not main(choice):
+            break
+            
