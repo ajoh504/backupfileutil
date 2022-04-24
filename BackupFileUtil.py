@@ -4,49 +4,34 @@
 from pathlib import Path
 import os, shelve
 
-# Configure files on source drive
-class source_config:
-    def __init__(self):
-        pass
-    # Retrieve user's home directory, check if BackupFileUtil dir exists
-    def add_main_dir() -> None:
-        new_dir = Path(Path.home()) / "BackupFileUtil"
-        if new_dir.exists() == False:
-            os.makedirs(new_dir)
+# Add main program directory
+def add_main_dir() -> None:
+    main_dir = Path(Path.home()) / "BackupFileUtil"
+    if main_dir.exists() == False:
+        os.makedirs(main_dir)
         
-    # Create / edit .txt file for storing file paths
-    def manage_text_file(new_name, new_path) -> None:
-        os.chdir(Path(Path.home()) / "BackupFileUtil")
-        stored_paths = open("storedPaths.txt", "w")
-        stored_paths.write(new_name, new_path)
-        stored_paths.close()
+# Add new file paths
+def edit_text_file(new_name, new_path) -> None:
+    stored_paths = open(Path.home() / "BackupFileUtil\\storedPaths.txt", "a")
+    stored_paths.write(new_name + '\n')
+    stored_paths.write(new_path + '\n')
+    stored_paths.close()
 
-    # Return stored file paths
-    def return_paths() -> str:
-        os.chdir(Path(Path.home()) / "BackupFileUtil")
-        stored_paths = open("storedPaths.txt", "r")
-        path_list = stored_paths.readlines()
-        stored_paths.close()
-        return '\n'.join(path_list)
-        
-# TODO: Configure files on backup drive
-class backup_config:
-    def __init__(self):
-        pass
-    # Return all existing drives
-    def return_drives() -> list:
-        DRIVE_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        return list(letter + ':\\' for letter in DRIVE_LETTERS if Path(letter + ':\\').exists())
+# View existing file paths
+def return_paths() -> str:
+    stored_paths = open(Path.home() / "BackupFileUtil\\storedPaths.txt", "r")
+    path_list = stored_paths.readlines()
+    stored_paths.close()
+    return '\n'.join(path_list)
 
-    # TODO: if copying file, create parent directory in backup location
-    def create_parent():
-        pass
-        #return_paths()
-    # TODO: if copying directory, create it in backup location
-        
+# View all available storage / optical drives        
+def return_drives() -> list:
+    DRIVE_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    return list(letter + ':\\' for letter in DRIVE_LETTERS if Path(letter + ':\\').exists())
+
 # TODO: copy files and directories
 def backup_task():
-    pass
+     pass
         
 def main(user_input: str) -> bool: 
     # TODO: Execute commands from user input
