@@ -17,7 +17,7 @@ def edit_text_file(new_name, new_path) -> None:
     stored_paths.write(new_path + '\n')
     stored_paths.close()
 
-# View existing file paths
+# Return existing file paths
 def return_paths() -> str:
     stored_paths = open(Path.home() / "BackupFileUtil\\storedPaths.txt", "r")
     path_list = stored_paths.readlines()
@@ -30,9 +30,17 @@ def return_drives() -> list:
     return list(letter + ':\\' for letter in DRIVE_LETTERS if Path(letter + ':\\').exists())
 
 # TODO: copy files and directories
-def backup_task():
-     pass
-        
+def back_up_files(source: list, destination: str) -> None:
+     path_object = Path(source)
+     for file_path in source:
+          if path_object.is_dir() == True:
+               shutil.copytree(file_path, destination)
+          elif path_object.is_file() == True:
+               print(source, destination + path_object.parent.name + '\\' + path_object.name)
+               os.mkdir(destination + path_object.parent.name)
+               shutil.copy(source, destination + path_object.parent.name + '\\' + path_object.name)
+               break
+         
 def main(user_input: str) -> bool: 
     # TODO: Execute commands from user input
     if user_input == '1':
