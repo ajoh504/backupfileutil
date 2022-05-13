@@ -1,5 +1,6 @@
 #!python3
 # BackupFileUtil.py -- Manage files and directories to store on a backup drive
+# INCOMPLETE 
 
 from pathlib import Path
 import os, shelve
@@ -18,11 +19,11 @@ def edit_text_file(new_name, new_path) -> None:
     stored_paths.close()
 
 # Return existing file paths
-def return_paths() -> str:
+def return_paths() -> list:
     stored_paths = open(Path.home() / "BackupFileUtil\\storedPaths.txt", "r")
     path_list = stored_paths.readlines()
     stored_paths.close()
-    return '\n'.join(path_list)
+    return path_list
 
 # View all available storage / optical drives        
 def return_drives() -> list:
@@ -33,13 +34,16 @@ def return_drives() -> list:
 def back_up_files(source: list, destination: str) -> None:
      path_object = Path(source)
      for file_path in source:
-          if path_object.is_dir() == True:
-               shutil.copytree(file_path, destination)
-          elif path_object.is_file() == True:
-               print(source, destination + path_object.parent.name + '\\' + path_object.name)
+          if Path(file_path).is_dir() == True:
+               # separate function to yield all directory parent names
+               print(Path(file_path), destination + path_object.parent.name)
+               #shutil.copytree(file_path, destination + path_object.parent.name)
+          elif Path(file_path).is_file() == True and Path(destination + path_object.parent.name).exists == False:
+               print(source, destination + path_object.parent.name)
                os.mkdir(destination + path_object.parent.name)
+          elif Path(file_path).is_file():
+               print(source, destination + path_object.parent.name + '\\' + path_object.name)
                shutil.copy(source, destination + path_object.parent.name + '\\' + path_object.name)
-               break
          
 def main(user_input: str) -> bool: 
     # TODO: Execute commands from user input
