@@ -10,7 +10,7 @@ If path leads to a directory, all files and subdirectories will be copied to the
 
 ### Getting Started
 
-This script was written using Python 3x on Windows. To use this script, a valid Python 3 installation is required. This script will not run on Mac or Linux. Once Python is installed, simply copy and paste the script in the desired location. 
+This script was written using Python 3.10 on Windows. To use this script, a valid Python 3.10 installation is required. This script will not run on Mac or Linux. Once Python is installed, simply copy and paste the script in the desired location. 
 
 ### Run Scipt in the Command Line 
 
