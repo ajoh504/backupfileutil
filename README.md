@@ -6,6 +6,8 @@ This script allows users to store file paths to a plain text file. The paths can
 
 This script takes no command line arguments. All arguments are accepted through `input()` calls.
 
+If path leads to a directory, all files and subdirectories will be copied to the backup drive. If path leads to a file, the file will be copied and the parent directory will be created on the backup drive.
+
 ### Getting Started:
 
 This script was written using Python 3x on Windows. To use this script, a valid Python 3 installation is required. This script will not run on Mac or Linux. Once Python is installed, simply copy and paste the script in the desired location. 
