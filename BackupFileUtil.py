@@ -5,6 +5,20 @@
 from pathlib import Path
 import os, shelve
 
+WELCOME_MESSAGE = " BackupFileUtil "
+WELCOME_PARA = """
+\nUse this script to store and manage files and directories that you
+wish to save to an external drive. If this is a first time setup,
+please select 1.
+\n"""
+USER_OPTIONS = {
+        1: "First time setup",
+        2: "Add new file path",
+        3: "View existing file paths",
+        4: "Run Backup",
+        5: "README",
+    }
+
 # Add main program directory
 def add_main_dir() -> None:
     main_dir = Path(Path.home()) / "BackupFileUtil"
@@ -18,34 +32,53 @@ def edit_text_file(new_name, new_path) -> None:
     stored_paths.write(new_path + '\n')
     stored_paths.close()
 
-# Return existing file paths
-def return_paths() -> list:
-    stored_paths = open(Path.home() / "BackupFileUtil\\storedPaths.txt", "r")
-    path_list = stored_paths.readlines()
-    stored_paths.close()
-    return path_list
-
 # View all available storage / optical drives        
 def return_drives() -> list:
     DRIVE_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     return list(letter + ':\\' for letter in DRIVE_LETTERS if Path(letter + ':\\').exists())
 
-# TODO: copy files and directories
-def back_up_files(source: list, destination: str) -> None:
-     path_object = Path(source)
-     for file_path in source:
-          if Path(file_path).is_dir() == True:
-               # separate function to yield all directory parent names
-               print(Path(file_path), destination + path_object.parent.name)
-               #shutil.copytree(file_path, destination + path_object.parent.name)
-          elif Path(file_path).is_file() == True and Path(destination + path_object.parent.name).exists == False:
-               print(source, destination + path_object.parent.name)
-               os.mkdir(destination + path_object.parent.name)
-          elif Path(file_path).is_file():
-               print(source, destination + path_object.parent.name + '\\' + path_object.name)
-               shutil.copy(source, destination + path_object.parent.name + '\\' + path_object.name)
-         
-def main(user_input: str) -> bool: 
+# Return existing file paths
+def get_paths() -> list:
+    stored_paths = open(Path.home() / "BackupFileUtil\\storedPaths.txt", "r")
+    path_list = stored_paths.readlines()
+    stored_paths.close()
+    return path_list
+
+def overwrite_dir(source: str, destination: str) -> None:
+     shutil.copytree(source, destination, dirs_exist_ok=True)
+
+def overwrite_files(source: str, destination: str) -> None:
+     shutil.copy(source, destination)
+     
+# copy files and directories
+def back_up_files(sources: list, destination: str) -> None:
+    for file_path in sources:
+        file_path = file_path.strip('\n')
+        path_object = Path(file_path)
+        if path_object.is_dir() == True:      
+            overwrite_dir(path_object, destination + path_object.name)
+        elif path_object.is_file() == True and Path(destination + (path_object.parent.name)).exists() == False:
+            os.mkdir(destination + path_object.parent.name)
+            overwrite_files(path_object, destination + path_object.parent.name + '\\' + path_object.name)
+        elif path_object.is_file():            
+            overwrite_files(path_object, destination + path_object.parent.name + '\\' + path_object.name)
+
+def main():
+    # print startup messages
+    print('\n', WELCOME_MESSAGE.center(68, "-"), WELCOME_PARA)
+    for number, message in USER_OPTIONS.items():
+        print(message.ljust(30, ".") + str(number).rjust(2))
+
+    # main selection loop
+    while True:    
+        choice = str(input())
+        if choice not in '12345':
+            print('Invalid selection\n')
+            continue
+        elif main(choice):
+            pass
+        elif not main(choice):
+            break
     # TODO: Execute commands from user input
     if user_input == '1':
         pass
@@ -62,34 +95,7 @@ def main(user_input: str) -> bool:
 
 
 if __name__ == "__main__":
-    WELCOME_MESSAGE = " Welcome to BackupFileUtil v. 1.0 "
-    WELCOME_PARA = """
-\nUse this script to store and manage files and directories that you
-wish to save to an external drive. If this is a first time setup,
-please select 1.
+    main()
 
-Otherwise, select 2 to add new file paths, 3 to view existing file
-paths, 4 to run the backup, or 5 to view the README.\n"""
-    USER_OPTIONS = {
-        1: "First time setup",
-        2: "Add new file path",
-        3: "View existing file paths",
-        4: "Run Backup",
-        5: "README",
-    }
-    # print startup messages
-    print('\n', WELCOME_MESSAGE.center(68, "-"), WELCOME_PARA)
-    for number, message in USER_OPTIONS.items():
-        print(message.ljust(30, ".") + str(number).rjust(2))
 
-    # main selection loop
-    while True:    
-        choice = str(input())
-        if choice not in '12345':
-            print('Invalid selection\n')
-            continue
-        elif main(choice):
-            pass
-        elif not main(choice):
-            break
             
