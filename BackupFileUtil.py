@@ -1,49 +1,25 @@
 #!python3
 # BackupFileUtil.py -- Manage files and directories to store on a backup drive
+# INCOMPLETE
+# TODO: Rewrite functions to be inside classes
 
 from pathlib import Path
 import shutil, os
 
-WELCOME_MESSAGE = " BackupFileUtil "
-WELCOME_PARA = """
-\nUse this script to store and manage files and directories that you
-wish to save to an external drive. If this is a first time setup,
-please select 1.\n"""
-MAIN_MENU = {
-    1: "First time setup",
-    2: "Add new file path",
-    3: "View existing file paths",
-    4: "Run Backup",
-    5: "EXIT",
-}
-SETUP_MESSAGE = """Please enter any file paths you wish to store for
-future backups. If path leads to a directory, all files and
-subdirectories will be copied to the backup drive. If path
-leads to a file, the file will becopied and the parent directory
-will be created on the backup drive.\n"""
-NEW_PATH_MESSAGE = 'Please enter path, or type "B" to return to main menu.\n'
-BACKUP_MESSAGE = (
-    "Please enter a path to store your backups. The following drives are available:\n"
-)
-BACKUP_WARNING = """\n\nWARNING: if you proceed, any files and directories on the backup drive
-with the same name as the source drive will be completely overwritten. This cannot be undone!
-Type 'b' if you wish to return to the main menu, or enter a path to the backup drive to proceed."""
-INVALID_BACKUP_PATH = (
-    "Invalid destination path. Please enter a valid file path to store your backups.\n"
-)
-
 # Add main program directory
-def add_main_dir() -> None:
-    main_dir = Path(Path.home()) / "BackupFileUtil"
-    if main_dir.exists() == False:
-        main_dir.mkdir()
+class mainDir:
+    def __init__(self, new_path):
+        self.new_path = new_path
 
+    def add_main_dir(self) -> None:
+        main_dir = Path(Path.home()) / "BackupFileUtil"
+        if main_dir.exists() == False:
+            main_dir.mkdir()
 
-# Add new file paths
-def edit_text_file(new_path) -> None:
-    stored_paths = open(Path.home() / "BackupFileUtil\\storedPaths.txt", "a")
-    stored_paths.write(new_path + "\n")
-    stored_paths.close()
+    def edit_text_file(self) -> None:
+        stored_paths = open(Path.home() / "BackupFileUtil\\storedPaths.txt", "a")
+        stored_paths.write(self.new_path + "\n")
+        stored_paths.close()
 
 
 # View all available storage / optical drives
@@ -107,22 +83,25 @@ def main() -> None:
             continue
         match choice:
             case '1': # First time setup
-                add_main_dir()
                 print(SETUP_MESSAGE)
                 while True:
                     path_or_break = input(NEW_PATH_MESSAGE)
+                    main_dir = mainDir(path_or_break)
+                    main_dir.add_main_dir()
                     if Path(path_or_break).exists():
-                        edit_text_file(path_or_break)
+                        main_dir.edit_text_file()
                     elif path_or_break.lower() == 'b':
                         break
                     else:
                         continue
             case '2': # Add new file path
                 while True:
-                    path_to_add = input(NEW_PATH_MESSAGE)
-                    if Path(path_to_add).exists():
-                        edit_text_file(path_to_add)
-                    elif path_to_add.lower() == 'b':
+                    path_or_break = input(NEW_PATH_MESSAGE)
+                    main_dir = mainDir(path_or_break)
+                    main_dir.add_main_dir()
+                    if Path(path_or_break).exists():
+                        main_dir.edit_text_file()
+                    elif path_or_break.lower() == 'b':
                         break
                     else:
                         continue
@@ -145,6 +124,34 @@ def main() -> None:
 
             case '5': # EXIT
                 exit()
+                
+WELCOME_MESSAGE = " BackupFileUtil "
+WELCOME_PARA = """
+\nUse this script to store and manage files and directories that you
+wish to save to an external drive. If this is a first time setup,
+please select 1.\n"""
+MAIN_MENU = {
+    1: "First time setup",
+    2: "Add new file path",
+    3: "View existing file paths",
+    4: "Run Backup",
+    5: "EXIT",
+}
+SETUP_MESSAGE = """Please enter any file paths you wish to store for
+future backups. If path leads to a directory, all files and
+subdirectories will be copied to the backup drive. If path
+leads to a file, the file will be copied and the parent directory
+will be created on the backup drive.\n"""
+NEW_PATH_MESSAGE = 'Please enter path, or type "B" to return to main menu.\n'
+BACKUP_MESSAGE = (
+    "Please enter a path to store your backups. The following drives are available:\n"
+)
+BACKUP_WARNING = """\n\nWARNING: if you proceed, any files and directories on the backup drive
+with the same name as the source drive will be completely overwritten. This cannot be undone!
+Type 'b' if you wish to return to the main menu, or enter a path to the backup drive to proceed."""
+INVALID_BACKUP_PATH = (
+    "Invalid destination path. Please enter a valid file path to store your backups.\n"
+)
 
 
 if __name__ == "__main__":
