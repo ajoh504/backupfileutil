@@ -1,72 +1,109 @@
 #!python3
 # BackupFileUtil.py -- Manage files and directories to store on a backup drive
 # INCOMPLETE
-# TODO: Rewrite functions to be inside classes
+# TODO: 1. copy entire filetree 2. Rewrite functions to be inside classes 3. create class for error handling
 
 from pathlib import Path
-import shutil, os
+import shutil
+import os
+import logging
+logging.basicConfig(level=logging.DEBUG, format=' %(asctime)s -  %(levelname)s -  %(message)s')
+logging.debug("program start")
 
-# Add main program directory
-class mainDir:
+# Add and/or manage main program directory
+class mainDirConfig:
     def __init__(self, new_path):
         self.new_path = new_path
 
     def add_main_dir(self) -> None:
-        main_dir = Path(Path.home()) / "BackupFileUtil"
-        if main_dir.exists() == False:
-            main_dir.mkdir()
+        main_dir_config = Path(Path.home()) / "BackupFileUtil"
+        if main_dir_config.exists() == False:
+            main_dir_config.mkdir()
 
     def edit_text_file(self) -> None:
         stored_paths = open(Path.home() / "BackupFileUtil\\storedPaths.txt", "a")
         stored_paths.write(self.new_path + "\n")
         stored_paths.close()
 
+class sourceConfig:
+    def __init__(self):
+        pass
 
-# View all available storage / optical drives
-def return_drives() -> list:
-    DRIVE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    return list(
-        letter + ":\\" for letter in DRIVE_LETTERS if Path(letter + ":\\").exists()
-    )
-
-
-# Return existing file paths
-def get_paths() -> list:
-    stored_paths = open(Path.home() / "BackupFileUtil\\storedPaths.txt", "r")
-    path_list = stored_paths.readlines()
-    stored_paths.close()
-    return path_list
-
-
-def overwrite_dir(source: str, destination: str) -> None:
-    shutil.copytree(source, destination, dirs_exist_ok=True)
-
-
-def overwrite_files(source: str, destination: str) -> None:
-    shutil.copy(source, destination)
-
-
-# copy files and directories
-def back_up_files(sources: list, destination: str) -> None:
-    for file_path in sources:
-        file_path = file_path.strip("\n")
-        path_object = Path(file_path)
-        if path_object.is_dir() == True:
-            overwrite_dir(path_object, destination + path_object.name)
-        elif (
-            path_object.is_file() == True
-            and Path(destination + (path_object.parent.name)).exists() == False
-        ):
-            os.mkdir(destination + path_object.parent.name)
-            overwrite_files(
-                path_object,
-                destination + path_object.parent.name + "\\" + path_object.name,
+    # View all available storage / optical drives
+    @staticmethod
+    def return_drives() -> list or str:
+        DRIVE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        try:
+            return list(
+                letter + ":\\" for letter in DRIVE_LETTERS if Path(letter + ":\\").exists()
             )
-        elif path_object.is_file():
-            overwrite_files(
-                path_object,
-                destination + path_object.parent.name + "\\" + path_object.name,
-            )
+        except OSError:
+            return OS_ERROR_MESSAGE
+
+    # Return existing file paths
+    @staticmethod
+    def get_paths() -> list:
+        stored_paths = open(Path.home() / "BackupFileUtil\\storedPaths.txt", "r")
+        path_list = stored_paths.readlines()
+        stored_paths.close()
+        return path_list
+
+class backupConfig:
+    def __init__(self, destination: str, source_list: list) -> None:
+        self.destination = destination
+        self.source_list = source_list
+
+    # TODO: rewrite to use pathlib instead of shutil
+    def overwrite_dir(self, source, dir_to_copy) -> None:
+        shutil.copytree(source, self.destination + dir_to_copy, dirs_exist_ok=True)
+
+    def overwrite_files(self, source, file_to_copy) -> None:
+        shutil.copy(source, self.destination + file_to_copy)
+
+    # TODO: rewrite to use pathlib instead of os
+    def back_up_files(self) -> None:
+        for file_path in self.source_list:
+            file_path = file_path.strip("\n")
+            path_to_overwrite = Path(file_path)
+            if path_to_overwrite.is_dir() == True:
+                #self.overwrite_dir(path_to_overwrite, path_to_overwrite.name)
+                logging.debug(
+                    "if path_to_overwrite is dir, "
+                    + str(path_to_overwrite)
+                    + " is a dir that will be copied as "
+                    + str(path_to_overwrite)
+                    + " on the destination drive"
+                )
+            elif (
+                path_to_overwrite.is_file() == True
+                and Path(self.destination + (path_to_overwrite.parent.name)).exists() == False
+            ):
+                #os.mkdir(self.destination + path_to_overwrite.parent.name)
+                logging.debug(
+                    "if path_to_overwrite is file and destination parent name does not exist, "
+                    + self.destination + str(path_to_overwrite.parent)
+                    + " is a dir that will be created to store the file "
+                    + str(path_to_overwrite)
+                    + " as "
+                    + str(path_to_overwrite.parent.name) + "\\" + str(path_to_overwrite.name)
+                )
+                # self.overwrite_files(
+                #     path_to_overwrite,
+                #     path_to_overwrite.parent.name + "\\" + path_to_overwrite.name,
+                # )
+            elif path_to_overwrite.is_file():
+                logging.debug(
+                    "if path_to_overwrite is file and destination parent name does exist,"
+                    + str(path_to_overwrite)
+                    + " is a file that will be overwritten on the destination drive as "
+                    + str(path_to_overwrite.parent.name)
+                    + "\\"
+                    + str(path_to_overwrite.name)
+                )
+                # self.overwrite_files(
+                #     path_to_overwrite,
+                #     path_to_overwrite.parent.name + "\\" + path_to_overwrite.name,
+                # )
 
 
 def main() -> None:
@@ -75,8 +112,8 @@ def main() -> None:
 
     # main selection loop
     while True:
-        for number, message in MAIN_MENU.items():
-            print(message.ljust(30, ".") + str(number).rjust(2))  # print main menu
+        for number, message in MAIN_MENU.items(): # print main menu
+            print(message.ljust(30, ".") + str(number).rjust(2))
         choice = input()
         if choice not in "12345":
             print("Invalid selection\n")
@@ -86,41 +123,49 @@ def main() -> None:
                 print(SETUP_MESSAGE)
                 while True:
                     path_or_break = input(NEW_PATH_MESSAGE)
-                    main_dir = mainDir(path_or_break)
-                    main_dir.add_main_dir()
+                    main_dir_config = mainDirConfig(path_or_break)
+                    main_dir_config.add_main_dir()
                     if Path(path_or_break).exists():
-                        main_dir.edit_text_file()
+                        main_dir_config.edit_text_file()
                     elif path_or_break.lower() == 'b':
                         break
                     else:
                         continue
+
             case '2': # Add new file path
                 while True:
                     path_or_break = input(NEW_PATH_MESSAGE)
-                    main_dir = mainDir(path_or_break)
-                    main_dir.add_main_dir()
+                    main_dir_config = mainDirConfig(path_or_break)
+                    main_dir_config.add_main_dir()
                     if Path(path_or_break).exists():
-                        main_dir.edit_text_file()
+                        main_dir_config.edit_text_file()
                     elif path_or_break.lower() == 'b':
                         break
                     else:
                         continue
+
             case '3': # View existing file paths
-                for path in get_paths():
+                for path in sourceConfig.get_paths():
                     print(path)
                 print('\n')
+
             case '4': # Run Backup
                 while True:
-                    print(BACKUP_MESSAGE, return_drives(), BACKUP_WARNING)
-                    destination_path = input()
-                    if destination_path.lower() == 'b':
-                        break                    
-                    elif Path(destination_path).exists() == True:
-                        back_up_files(get_paths(), destination_path)
+                    if type(sourceConfig.return_drives()) == str:
+                        print(sourceConfig.return_drives())
                         break
-                    elif Path(destination_path).exists() == False:
-                        print(INVALID_BACKUP_PATH)
-                        continue
+                    elif type(sourceConfig.return_drives()) == list:
+                        print(BACKUP_MESSAGE, sourceConfig.return_drives(), BACKUP_WARNING)
+                        destination_path = input()
+                        if destination_path.lower() == 'b':
+                            break
+                        elif Path(destination_path).exists() == True:
+                            backup_config = backupConfig(destination_path, sourceConfig.get_paths())
+                            backup_config.back_up_files()
+                            break
+                        elif Path(destination_path).exists() == False:
+                            print(INVALID_BACKUP_PATH)
+                            continue
 
             case '5': # EXIT
                 exit()
@@ -152,6 +197,8 @@ Type 'b' if you wish to return to the main menu, or enter a path to the backup d
 INVALID_BACKUP_PATH = (
     "Invalid destination path. Please enter a valid file path to store your backups.\n"
 )
+OS_ERROR_MESSAGE = '''\nWARNING. One of the discovered drives may be corrupt or may be formatted with an invalid
+drive type. Please check the volume type of your backup drive(s) before proceeding.\n'''
 
 
 if __name__ == "__main__":
