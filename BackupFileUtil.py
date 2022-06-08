@@ -1,11 +1,10 @@
 #!python3
 # BackupFileUtil.py -- Manage files and directories to store on a backup drive
 # INCOMPLETE
-# TODO: 1. copy entire filetree 2. Rewrite functions to be inside classes 3. create class for error handling
+# TODO: 1. copy entire file path 2. create class for error handling
 
 from pathlib import Path
 import shutil
-import os
 import logging
 logging.basicConfig(level=logging.DEBUG, format=' %(asctime)s -  %(levelname)s -  %(message)s')
 logging.debug("program start")
@@ -64,47 +63,23 @@ class backupConfig:
     def back_up_files(self) -> None:
         for file_path in self.source_list:
             file_path = file_path.strip("\n")
-            path_to_overwrite = Path(file_path)
-            if path_to_overwrite.is_dir() == True:
-                #self.overwrite_dir(path_to_overwrite, path_to_overwrite.name)
-                logging.debug(
-                    "if path_to_overwrite is dir, "
-                    + str(path_to_overwrite)
-                    + " is a dir that will be copied as "
-                    + str(path_to_overwrite)
-                    + " on the destination drive"
-                )
+            path_object = Path(file_path)
+            if path_object.is_dir() == True:
+                self.overwrite_dir(path_object, path_object.name)
             elif (
-                path_to_overwrite.is_file() == True
-                and Path(self.destination + (path_to_overwrite.parent.name)).exists() == False
+                    path_object.is_file() == True
+                    and Path(self.destination + (path_object.parent.name)).exists() == False
             ):
-                #os.mkdir(self.destination + path_to_overwrite.parent.name)
-                logging.debug(
-                    "if path_to_overwrite is file and destination parent name does not exist, "
-                    + self.destination + str(path_to_overwrite.parent)
-                    + " is a dir that will be created to store the file "
-                    + str(path_to_overwrite)
-                    + " as "
-                    + str(path_to_overwrite.parent.name) + "\\" + str(path_to_overwrite.name)
+                Path(self.destination + path_object.parent.name).mkdir()
+                self.overwrite_files(
+                    path_object,
+                    path_object.parent.name + "\\" + path_object.name,
                 )
-                # self.overwrite_files(
-                #     path_to_overwrite,
-                #     path_to_overwrite.parent.name + "\\" + path_to_overwrite.name,
-                # )
-            elif path_to_overwrite.is_file():
-                logging.debug(
-                    "if path_to_overwrite is file and destination parent name does exist,"
-                    + str(path_to_overwrite)
-                    + " is a file that will be overwritten on the destination drive as "
-                    + str(path_to_overwrite.parent.name)
-                    + "\\"
-                    + str(path_to_overwrite.name)
+            elif path_object.is_file():
+                self.overwrite_files(
+                    path_object,
+                    path_object.parent.name + "\\" + path_object.name,
                 )
-                # self.overwrite_files(
-                #     path_to_overwrite,
-                #     path_to_overwrite.parent.name + "\\" + path_to_overwrite.name,
-                # )
-
 
 def main() -> None:
     # print startup messages
