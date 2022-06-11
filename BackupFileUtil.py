@@ -3,7 +3,6 @@
 # TODO: create class for error handling
 # TODO: shorten main() function / search for reusable code
 
-
 from pathlib import Path
 import shutil
 import os
@@ -88,7 +87,7 @@ def main() -> None:
         for number, message in MAIN_MENU.items():  # print main menu
             print(message.ljust(30, ".") + str(number).rjust(2))
         main_menu_choice = input()
-        if main_menu_choice not in "12345":
+        if main_menu_choice not in "123456":
             print("Invalid selection\n")
             continue
         match main_menu_choice:
@@ -112,7 +111,7 @@ def main() -> None:
                         case_four_choice = input()
                         if case_four_choice.lower() == 'b':
                             break
-                        elif Path(case_four_choice).exists() == True:
+                        elif Path(case_four_choice).exists() == True and case_four_choice != '':
                             backup_config = backupConfig(case_four_choice, sourceConfig.get_paths())
                             backup_config.back_up_files()
                             break
@@ -122,7 +121,10 @@ def main() -> None:
                     except OSError:
                         print(sourceConfig.return_drives(), OS_ERROR_MESSAGE)
 
-            case '5':  # EXIT
+            case '5':  # view README
+                print(README)
+
+            case '6': # end program
                 exit()
 
 
@@ -135,7 +137,8 @@ MAIN_MENU = {
     2: "Add new file path",
     3: "View existing file paths",
     4: "Run Backup",
-    5: "EXIT",
+    5: "README",
+    6: "EXIT"
 }
 SETUP_MESSAGE = """
 Please enter a path to any file you wish to store for future backups. Directory paths 
@@ -150,6 +153,36 @@ INVALID_BACKUP_PATH = "Invalid destination path. Please enter a valid file path 
 OS_ERROR_MESSAGE = '''
 \nWARNING. One of the discovered drives may be corrupt or may be formatted with an invalid
 drive type. Please check the volume type of your backup drive(s) before proceeding.\n'''
+README = '''
+BackupFileUtil README
+
+----- Usage -----
+
+This script allows users to store file paths to a plain text file. The paths can later be used 
+to backup files and directories to an external drive. `shutil.copy()` and `shutil.copytree()` 
+are the methods used for the backup, so running the backup will effectively overwrite the 
+previous files if they already exist on the backup drive. A warning message will be displayed 
+before running the backup, so proceed with caution because this cannot be undone. 
+
+This script takes no command line arguments. All arguments are accepted through `input()` calls.
+
+If the given path leads to a directory, all files and subdirectories will be copied to the 
+backup drive, and the directory's parents will be created on the backup drive. If the path 
+leads to a file, the file will be copied and the parents will be created on the backup drive.
+
+----- Requirements -----
+
+This script was written using Python 3.10 on Windows. To use this script, a valid Python 3.10 
+installation is required. This script has not been tested on macOS or Linux. 
+
+----- Optional Configuration -----
+
+During the first time setup, the script will prompt the user to enter file paths to be stored. 
+A directory called "BackupFileUtil" will be created in the user's home directory. The plain 
+text file, titled `storedPaths.txt`, is stored there by default. Optionally, the text file can 
+be edited prior to running the backup. To do so, simply open the text file and add file paths 
+with a new line after each path. 
+'''
 
 if __name__ == "__main__":
     main()
