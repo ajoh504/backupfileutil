@@ -3,12 +3,14 @@
 # TODO: create class for error handling
 # TODO: shorten main() function / search for reusable code
 
+
 from pathlib import Path
 import shutil
 import os
 import logging
 logging.basicConfig(level=logging.DEBUG, format=' %(asctime)s -  %(levelname)s -  %(message)s')
-logging.debug("program start")
+logging.debug("Program start")
+
 
 class mainDirConfig:  # Add and/or manage main program directory
     def __init__(self, new_path):
@@ -68,6 +70,17 @@ class backupConfig:
             elif Path(file_path).is_file():
                 self.copy_files(file_path)
 
+def consume_new_path() -> None:
+    while True:
+        choice = input(NEW_PATH_MESSAGE)
+        main_dir_config = mainDirConfig(choice)
+        main_dir_config.add_main_dir()
+        if Path(choice).exists():
+            main_dir_config.edit_text_file()
+        elif choice.lower() == 'b':
+            break
+        else:
+            continue
 
 def main() -> None:
     print("\n", WELCOME_MESSAGE.center(82, "-"), WELCOME_PARA)  # print startup messages
@@ -81,28 +94,12 @@ def main() -> None:
         match main_menu_choice:
             case '1':  # First time setup
                 print(SETUP_MESSAGE)
-                while True:
-                    case_one_choice = input(NEW_PATH_MESSAGE)
-                    main_dir_config = mainDirConfig(case_one_choice)
-                    main_dir_config.add_main_dir()
-                    if Path(case_one_choice).exists():
-                        main_dir_config.edit_text_file()
-                    elif case_one_choice.lower() == 'b':
-                        break
-                    else:
-                        continue
+                consume_new_path()
+                continue
 
             case '2':  # Add new file path
-                while True:
-                    case_two_choice = input(NEW_PATH_MESSAGE)
-                    main_dir_config = mainDirConfig(case_two_choice)
-                    main_dir_config.add_main_dir()
-                    if Path(case_two_choice).exists():
-                        main_dir_config.edit_text_file()
-                    elif case_two_choice.lower() == 'b':
-                        break
-                    else:
-                        continue
+                consume_new_path()
+                continue
 
             case '3':  # View existing file paths
                 for path in sourceConfig.get_paths():
