@@ -1,92 +1,78 @@
-#!python3
+# !python3
 # BackupFileUtil.py -- Manage files and directories to store on a backup drive
-# INCOMPLETE
-# TODO: 1. copy entire file path 2. create class for error handling
+# TODO: create class for error handling
+# TODO: shorten main() function / search for reusable code
 
 from pathlib import Path
 import shutil
+import os
 import logging
 logging.basicConfig(level=logging.DEBUG, format=' %(asctime)s -  %(levelname)s -  %(message)s')
 logging.debug("program start")
 
-# Add and/or manage main program directory
-class mainDirConfig:
+class mainDirConfig: # Add and/or manage main program directory
     def __init__(self, new_path):
         self.new_path = new_path
 
-    def add_main_dir(self) -> None:
+    def add_main_dir(self) -> None: # add "BackupFileUtil" to the User's home directory
         main_dir_config = Path(Path.home()) / "BackupFileUtil"
         if main_dir_config.exists() == False:
             main_dir_config.mkdir()
 
-    def edit_text_file(self) -> None:
-        stored_paths = open(Path.home() / "BackupFileUtil\\storedPaths.txt", "a")
+    def edit_text_file(self) -> None: # edit text file containing file paths
+        stored_paths = open(Path.home() / "BackupFileUtil/storedPaths.txt", "a")
         stored_paths.write(self.new_path + "\n")
         stored_paths.close()
 
 class sourceConfig:
     def __init__(self):
         pass
-
-    # View all available storage / optical drives
+    # TODO: return joined list with spaces and numbered elements for each drive
     @staticmethod
-    def return_drives() -> list or str:
+    def return_drives() -> list or str: # return a list of all available storage media
         DRIVE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         try:
             return list(
-                letter + ":\\" for letter in DRIVE_LETTERS if Path(letter + ":\\").exists()
+                letter + ":/" for letter in DRIVE_LETTERS if Path(letter + ":/").exists()
             )
         except OSError:
             return OS_ERROR_MESSAGE
 
-    # Return existing file paths
     @staticmethod
-    def get_paths() -> list:
-        stored_paths = open(Path.home() / "BackupFileUtil\\storedPaths.txt", "r")
+    def get_paths() -> list: # return a list of all stored file paths
+        stored_paths = open(Path.home() / "BackupFileUtil/storedPaths.txt", "r")
         path_list = stored_paths.readlines()
         stored_paths.close()
         return path_list
 
 class backupConfig:
     def __init__(self, destination: str, source_list: list) -> None:
-        self.destination = destination
+        self.destination = destination + 'Backups/' # dir named 'Backups' on destination drive
         self.source_list = source_list
 
-    # TODO: rewrite to use pathlib instead of shutil
-    def overwrite_dir(self, source, dir_to_copy) -> None:
-        shutil.copytree(source, self.destination + dir_to_copy, dirs_exist_ok=True)
+    def copy_tree(self, dir_path: str) -> None:
+        shutil.copytree(dir_path, self.destination + '/'.join(Path(dir_path).parts[1:]), dirs_exist_ok=True)
 
-    def overwrite_files(self, source, file_to_copy) -> None:
-        shutil.copy(source, self.destination + file_to_copy)
+    def copy_files(self, file_path: str) -> None:
+        shutil.copy(file_path, self.destination + '/'.join(Path(file_path).parts[1:-1]))
 
-    # TODO: rewrite to use pathlib instead of os
     def back_up_files(self) -> None:
         for file_path in self.source_list:
             file_path = file_path.strip("\n")
-            path_object = Path(file_path)
-            if path_object.is_dir() == True:
-                self.overwrite_dir(path_object, path_object.name)
+            if Path(file_path).is_dir() == True:
+                self.copy_tree(file_path)
             elif (
-                    path_object.is_file() == True
-                    and Path(self.destination + (path_object.parent.name)).exists() == False
+                    Path(file_path).is_file() == True
+                    and Path(self.destination + '/'.join(Path(file_path).parts[1:-1])).exists() == False
             ):
-                Path(self.destination + path_object.parent.name).mkdir()
-                self.overwrite_files(
-                    path_object,
-                    path_object.parent.name + "\\" + path_object.name,
-                )
-            elif path_object.is_file():
-                self.overwrite_files(
-                    path_object,
-                    path_object.parent.name + "\\" + path_object.name,
-                )
+                os.makedirs(self.destination + '/'.join(Path(file_path).parts[1:-1]))
+                self.copy_files(file_path)
+            elif Path(file_path).is_file():
+                self.copy_files(file_path)
 
 def main() -> None:
-    # print startup messages
-    print("\n", WELCOME_MESSAGE.center(68, "-"), WELCOME_PARA)
-
-    # main selection loop
-    while True:
+    print("\n", WELCOME_MESSAGE.center(68, "-"), WELCOME_PARA) # print startup messages
+    while True: # main selection loop
         for number, message in MAIN_MENU.items(): # print main menu
             print(message.ljust(30, ".") + str(number).rjust(2))
         choice = input()
