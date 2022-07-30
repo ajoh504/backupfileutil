@@ -2,7 +2,7 @@
 
 ### Usage
 
-This script allows users to store file paths to a plain text file. The paths can later be used to backup files and directories to an external drive. Each new backup is created with the directory name "backup" followed by a date and time stamp. Previous backups will not be overwritten unless the user chooses to delete them manually. 
+This script allows users to store file paths to a plain text file. The paths can later be used to backup files and directories to an external drive. Each new backup is created with the directory name "backup" followed by a date and time stamp. This script does not delete, remove, or overwrite previous backups.
 
 This script takes no command line arguments. All arguments are accepted through `input()` calls.
 
