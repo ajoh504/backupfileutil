@@ -16,10 +16,5 @@
   "WELCOME_PARA": [
     "\nUse this script to store and manage files and directories that you wish to save to",
     "an external drive. If this is a first time setup, please select 1.\n"
-  ],
-  "BACKUP_WARNING": [
-    "WARNING: if you proceed, any files and directories on the backup drive with the same",
-    "name as the source drive will be completely overwritten. This cannot be undone! Type 'B'",
-    "if you wish to return to the main menu, or type in a backup drive letter to proceed."
   ]
 }
