@@ -15,3 +15,11 @@ This script was written using Python 3.10 on Windows. To use this script, a vali
 ### Optional Configuration
 
 During the first time setup, the script will prompt the user to enter file paths to be stored. A directory called "backupfileutil" will be created in the user's home directory. The plain text file, titled `storedpaths.txt`, is stored there by default. Optionally, the text file can be edited prior to running the backup. To do so, simply open the text file and add file paths with a new line after each path. 
+
+Examples: 
+```
+C:\Star Wars - Rogue Squadron 3D\ROGUE\PlayerProfiles
+C:\STAR WARS Racer\data
+C:\Program Files (x86)\Steam\steamapps\common\IL 2 Sturmovik 1946\Missions\1_Mission Builder
+C:\Program Files (x86)\Steam\steamapps\common\RollerCoaster Tycoon Deluxe\Saved Games
+```
