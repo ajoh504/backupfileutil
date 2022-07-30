@@ -2,10 +2,12 @@
 # backupfileutil.py -- Manage files and directories to store on a backup drive
 
 
-from pathlib import Path
+
 import shutil
 import os
 import json
+from pathlib import Path
+from datetime import datetime
 import logging
 
 logging.basicConfig(
@@ -17,7 +19,7 @@ logging.debug("Program start")
 class Backup:
     def __init__(self, destination: str, source_list: list):
         self.destination = (
-            destination + "backups/"
+            f"{destination}backups_{datetime.now().strftime('%Y%m%d%H%M%S')}/"
         )
         self.source_list = source_list
 
@@ -111,7 +113,6 @@ def main() -> None:
                     print(
                         TEXT["BACKUP"],
                         return_drives(),
-                        "\n".join(TEXT["BACKUP_WARNING"]),
                     )
                     case_four_choice = input()
                     if case_four_choice.lower() == "b":
