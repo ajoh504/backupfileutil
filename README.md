@@ -1,4 +1,4 @@
-# BackupFileUtil
+# backupfileutil
 
 ### Usage
 
@@ -14,4 +14,4 @@ This script was written using Python 3.10 on Windows. To use this script, a vali
 
 ### Optional Configuration
 
-During the first time setup, the script will prompt the user to enter file paths to be stored. A directory called "BackupFileUtil" will be created in the user's home directory. The plain text file, titled `storedPaths.txt`, is stored there by default. Optionally, the text file can be edited prior to running the backup. To do so, simply open the text file and add file paths with a new line after each path. 
+During the first time setup, the script will prompt the user to enter file paths to be stored. A directory called "backupfileutil" will be created in the user's home directory. The plain text file, titled `storedpaths.txt`, is stored there by default. Optionally, the text file can be edited prior to running the backup. To do so, simply open the text file and add file paths with a new line after each path. 
