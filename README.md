@@ -2,7 +2,7 @@
 
 ### Usage
 
-This script allows users to store file paths to a plain text file. The paths can later be used to backup files and directories to an external drive. `shutil.copy()` and `shutil.copytree()` are the methods used for the backup, so running the backup will effectively overwrite the previous files if they already exist on the backup drive. A warning message will be displayed before running the backup, so proceed with caution because this cannot be undone. 
+This script allows users to store file paths to a plain text file. The paths can later be used to backup files and directories to an external drive. Each new backup is created with the directory name "backup" followed by a date and time stamp. Previous backups will not be overwritten unless the user chooses to delete them manually. 
 
 This script takes no command line arguments. All arguments are accepted through `input()` calls.
 
