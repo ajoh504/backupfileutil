@@ -10,7 +10,7 @@ from datetime import datetime
 
 
 def copy_tree(destination: str, dir_path: str) -> None:
-    """Copy directory and all of its files and subdirectories to destination drive."""
+    """Copy a directory and all of its files and subdirectories to a destination drive"""
     shutil.copytree(
         dir_path,
         destination + "/".join(Path(dir_path).parts[1:]),
@@ -19,7 +19,7 @@ def copy_tree(destination: str, dir_path: str) -> None:
 
 
 def copy_files(destination: str, file_path: str) -> None:
-    """Copy files to destination drive."""
+    """Copy a file to a destination drive"""
     shutil.copy(file_path, destination + "/".join(Path(file_path).parts[1:-1]))
 
 
@@ -30,7 +30,7 @@ def back_up_files(destination: str, file_list: str) -> None:
     backup folder. If file_path is a file, check to make sure its parent directories
     exist on the destination drive. If parents do not exist, create them on the
     destination drive and copy the file. Lastly, copy any remaining files from the
-    source_list.
+    source_list
     """
     for file_path in file_list:
         file_path = file_path.strip("\n")
@@ -48,20 +48,20 @@ def back_up_files(destination: str, file_list: str) -> None:
 
 
 def edit_text_file(new_path: str) -> None:
-    """edit text file containing file paths"""
+    """Add new paths to storedpaths.txt"""
     with open(Path.home() / "backupfileutil/storedpaths.txt", "a") as stored_paths:
         stored_paths.write(new_path + "\n")
 
 
 def add_main_dir() -> None:
-    """add "backupfileutil" to the User's home directory"""
+    """Add "backupfileutil" to the User's home directory"""
     main_dir = Path(Path.home()) / "backupfileutil"
     if main_dir.exists() == False:
         main_dir.mkdir()
 
 
 def return_drives() -> str:
-    """Return all available storage media"""
+    """Return all available storage drives or storage media"""
     DRIVE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     return " ".join(
         [letter + ":/" for letter in DRIVE_LETTERS if Path(letter + ":/").exists()]
